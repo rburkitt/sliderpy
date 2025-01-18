@@ -1,9 +1,11 @@
 import tkinter as tk
+#from tkinter import ttk
 from tkinter import Frame, messagebox
 import random
 import re
 
 numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", ""]
+button_dict = {} 
 
 def extract_number(string):
     match = re.search(r'\d+', string)
@@ -29,11 +31,15 @@ def click_me(sender):
         messagebox.showinfo("Hurray!", "You solved it!")
 
 def load_board():
+    for widget in frame.winfo_children():
+        widget.destroy() 
+
     for i in range(4):
         for j in range(4):
-            button = tk.Button(frame, text=f'{numbers[4*i+j]}')
+            button = tk.Button(frame, text=f'{numbers[4*i+j]}', height=5, width=5)
             button.configure(command=lambda b=button: click_me(b))
             button.grid(row=i, column = j)
+            button_dict[4*i*j] = button    
 
 def begin():
     random.shuffle(numbers)
