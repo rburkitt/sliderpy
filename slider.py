@@ -1,56 +1,45 @@
 import tkinter as tk
-#from tkinter import ttk
-from tkinter import Frame, messagebox
+from tkinter import messagebox
 import random
-import re
 
-numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", ""]
+# Constants
+GRID_SIZE = 4
+BUTTON_HEIGHT = 5
+BUTTON_WIDTH = 5
+BUTTON_BORDER_WIDTH = 5
+WINNING_SEQUENCE = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,"
 
-def extract_number(string):
-    match = re.search(r'\d+', string)
-    return int(match.group()) if match else None
+# Initialize numbers
+numbers = [str(i) for i in range(1, GRID_SIZE * GRID_SIZE)] + [""]
 
-def click_me(sender):
-    text = sender.cget("text")
-    if text == "":
-        return
-    
-    index = numbers.index(text)
-    cell = numbers[index]
+def click_me(button):
+    index = numbers.index(button.cget("text"))
     empty = numbers.index("")
-    if empty != index - 1 and empty != index + 1 and empty != index - 4 and empty != index +4:
-        return
-    
-    numbers[index] = ""
-    numbers[empty] = cell
+    numbers[index], numbers[empty] = numbers[empty], numbers[index]
 
     widgets = frame.winfo_children()
-    widgets[index].config(text = numbers[index])
-    widgets[empty].config(text = numbers[empty])
+    widgets[index].config(text=numbers[index])
+    widgets[empty].config(text=numbers[empty])
 
-    if ",".join(numbers) == "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,":
+    if ",".join(numbers) == WINNING_SEQUENCE:
         messagebox.showinfo("Hurray!", "You solved it!")
 
 def load_board():
-    for i in range(4):
-        for j in range(4):
-            button = tk.Button(frame, text=f'{numbers[4*i+j]}', height=5, width=5, relief=tk.RAISED, borderwidth=5)
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            button = tk.Button(frame, text=f'{numbers[GRID_SIZE * i + j]}', height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=tk.RAISED, borderwidth=BUTTON_BORDER_WIDTH)
             button.configure(command=lambda b=button: click_me(b))
-            button.grid(row=i, column = j)   
+            button.grid(row=i, column=j)
 
 def begin():
     random.shuffle(numbers)
-    load_board()            
-
+    load_board()
 
 root = tk.Tk()
-
 root.title("Slider Puzzle")
 
-frame = Frame(root, bd = 1)
-frame.pack(fill = 'both', expand = True,
-           padx = 15, pady = 15)
+frame = tk.Frame(root)
+frame.pack()
 
 begin()
-
-root.mainloop()        
+root.mainloop()
